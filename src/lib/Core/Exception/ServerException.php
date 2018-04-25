@@ -1,6 +1,5 @@
 <?php
 
-
 namespace Aliyun\Core\Exception;
 
 class ServerException extends ClientException
