@@ -5,9 +5,9 @@ return [
     //秘钥
     'ACCESS_KEY_SECRET'=>env('ACCESS_KEY_SECRET'),
     //短信签名
-    'signName'=>env('signName'),
+    'signName'=>env('SIGN_NAME'),
     //短信模板编号
-    'templateCode'=>env('templateCode'),
+    'templateCode'=>env('TEMPLATE_CODE'),
     //短信模板中的字段
     'field'=>'number',
     //短信模板默认内容
