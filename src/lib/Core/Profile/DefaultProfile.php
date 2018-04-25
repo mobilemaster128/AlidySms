@@ -8,10 +8,6 @@ use Aliyun\Core\Regions\ProductDomain;
 use Aliyun\Core\Regions\Endpoint;
 use Aliyun\Core\Regions\EndpointProvider;
 
-define("AUTH_TYPE_RAM_AK", "RAM_AK");
-define("AUTH_TYPE_RAM_ROLE_ARN", "RAM_ROLE_ARN");
-define("AUTH_TYPE_ECS_RAM_ROLE", "ECS_RAM_ROLE");
-
 class DefaultProfile implements IClientProfile
 {
 	private static $profile;
@@ -19,12 +15,11 @@ class DefaultProfile implements IClientProfile
 	private static $credential;
 	private static $regionId;
 	private static $acceptFormat;
-	private static $authType;
 	
 	private static $isigner;
 	private static $iCredential;
 	
-	private function  __construct($regionId, $credential, $authType = AUTH_TYPE_RAM_AK)
+	private function  __construct($regionId, $credential)
 	{
 	    self::$regionId = $regionId;
 	    self::$credential = $credential;
@@ -37,20 +32,6 @@ class DefaultProfile implements IClientProfile
 		self::$profile = new DefaultProfile($regionId, $credential);
 		return self::$profile;
 	}
-
-    public static function getRamRoleArnProfile($regionId, $accessKeyId, $accessSecret, $roleArn, $roleSessionName)
-    {
-        $credential =new RamRoleArnCredential($accessKeyId, $accessSecret, $roleArn, $roleSessionName);
-        self::$profile = new DefaultProfile($regionId, $credential, AUTH_TYPE_RAM_ROLE_ARN);
-        return self::$profile;
-    }
-
-    public static function getEcsRamRoleProfile($regionId, $roleName)
-    {
-        $credential =new EcsRamRoleCredential($roleName);
-        self::$profile = new DefaultProfile($regionId, $credential, AUTH_TYPE_ECS_RAM_ROLE);
-        return self::$profile;
-    }
 	
 	public function getSigner()
 	{
@@ -79,24 +60,6 @@ class DefaultProfile implements IClientProfile
 		}
 		return self::$credential;
 	}
-
-    public function isRamRoleArn()
-    {
-        if(self::$authType == AUTH_TYPE_RAM_ROLE_ARN)
-        {
-            return true;
-        }
-        return false;
-    }
-
-    public function isEcsRamRole()
-    {
-        if(self::$authType == AUTH_TYPE_ECS_RAM_ROLE)
-        {
-            return true;
-        }
-        return false;
-    }
 	
 	public static function getEndpoints()
 	{
@@ -122,8 +85,6 @@ class DefaultProfile implements IClientProfile
 		{
 			self::updateEndpoint($regionId, $product, $domain, $endpoint);
 		}
-
-		LocationService::addEndPoint($regionId, $product, $domain);
 	}
 	
 	public static function findEndpointByName($endpointName)

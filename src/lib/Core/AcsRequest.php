@@ -16,18 +16,12 @@ abstract class AcsRequest
 	protected $queryParameters = array();
 	protected $headers = array();
 	
-	protected $locationServiceCode;
-	protected $locationEndpointType;
-	
-	function  __construct($product, $version, $actionName, $locationServiceCode = null, $locationEndpointType = "openAPI")
+	function  __construct($product, $version, $actionName)
 	{
 	    $this->headers["x-sdk-client"] = "php/2.0.0";
 	    $this->product = $product;
 	    $this->version = $version;
 	    $this->actionName = $actionName;
-	    
-	    $this->locationServiceCode = $locationServiceCode;
-	    $this->locationEndpointType = $locationEndpointType;
 	}
 	
 	public abstract function composeUrl($iSigner, $credential, $domain);
@@ -126,14 +120,4 @@ abstract class AcsRequest
     {
         $this->headers[$headerKey] = $headerValue;
     } 
-	
-	public function getLocationServiceCode()
-	{
-		return $this->locationServiceCode;
-	}
-
-	public function getLocationEndpointType()
-	{
-		return $this->locationEndpointType;
-	}
 }

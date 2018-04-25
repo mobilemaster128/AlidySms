@@ -50,28 +50,8 @@ class DefaultAcsClient implements IAcsClient
         if (null == $credential) {
             $credential = $this->iClientProfile->getCredential();
         }
-        if ($this->iClientProfile->isRamRoleArn()) {
-            $credential = $this->ramRoleArnService->getSessionCredential();
-        }
-        if ($this->iClientProfile->isEcsRamRole()) {
-            $credential = $this->ecsRamRoleService->getSessionCredential();
-        }
-        if (null == $credential) {
-            throw new ClientException("Incorrect user credentials.", "SDK.InvalidCredential");
-        }
 
         $request = $this->prepareRequest($request);
-
-        // Get the domain from the Location Service by speicified `ServiceCode` and `RegionId`.
-        $domain = null;
-        if (null != $request->getLocationServiceCode())
-        {
-            $domain = $this->locationService->findProductDomain($request->getRegionId(), $request->getLocationServiceCode(), $request->getLocationEndpointType(), $request->getProduct());
-        }       
-        if ($domain == null)
-        {
-            $domain = EndpointProvider::findProductDomain($request->getRegionId(), $request->getProduct());
-        }
 
         if (null == $domain) {
             throw new ClientException("Can not find endpoint to access.", "SDK.InvalidRegionId");

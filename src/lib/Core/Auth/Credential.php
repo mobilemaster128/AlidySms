@@ -11,11 +11,10 @@ class Credential
     private $accessSecret;
     private $securityToken;
     
-    public function __construct($accessKeyId, $accessSecret, $securityToken)
+    public function __construct($accessKeyId, $accessSecret)
     {
         $this->accessKeyId = $accessKeyId;
         $this->accessSecret = $accessSecret;
-        $this->securityToken = $securityToken;
         $this->refreshDate = date($this->dateTimeFormat);
     }
     
