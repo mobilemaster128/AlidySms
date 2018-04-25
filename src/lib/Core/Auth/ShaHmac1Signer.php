@@ -6,7 +6,7 @@ class ShaHmac1Signer implements ISigner
 {
     public function signString($source, $accessSecret)
     {
-        return	base64_encode(hash_hmac('sha1', $source, $accessSecret, true));
+        return    base64_encode(hash_hmac('sha1', $source, $accessSecret, true));
     }
     
     public function getSignatureMethod()

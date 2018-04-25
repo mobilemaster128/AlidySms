@@ -11,9 +11,9 @@ abstract class RoaAcsRequest extends AcsRequest
     private static $headerSeparator = "\n";
     private static $querySeprator = "&";
     
-    public function __construct($product, $version, $actionName)
+    function  __construct($product, $version, $actionName, $locationServiceCode = null, $locationEndpointType = "openAPI")
     {
-        parent::__construct($product, $version, $actionName);
+        parent::__construct($product, $version, $actionName, $locationServiceCode, $locationEndpointType);
         $this->setVersion($version);
         $this->initialize();
     }
@@ -25,7 +25,7 @@ abstract class RoaAcsRequest extends AcsRequest
     
     public function composeUrl($iSigner, $credential, $domain)
     {
-        $this->prepareHeader($iSigner);
+        $this->prepareHeader($iSigner, $credential);
 
         $signString = $this->getMethod().self::$headerSeparator;
         if (isset($this->headers["Accept"])) {
@@ -58,10 +58,9 @@ abstract class RoaAcsRequest extends AcsRequest
         return $requestUrl;
     }
     
-    private function prepareHeader($iSigner)
+    private function prepareHeader($iSigner, $credential)
     {
-        date_default_timezone_set("GMT");
-        $this->headers["Date"] = date($this->dateTimeFormat);
+        $this->headers["Date"] = gmdate($this->dateTimeFormat);
         if (null == $this->acceptFormat) {
             $this->acceptFormat = "RAW";
         }
@@ -74,6 +73,9 @@ abstract class RoaAcsRequest extends AcsRequest
             $this->headers["Content-MD5"] = base64_encode(md5(json_encode($content), true));
         }
         $this->headers["Content-Type"] = "application/octet-stream;charset=utf-8";
+        if ($credential->getSecurityToken() != null) {
+            $this->headers["x-acs-security-token"] = $credential->getSecurityToken();
+        }
     }
     
     private function replaceOccupiedParameters()
@@ -133,9 +135,9 @@ abstract class RoaAcsRequest extends AcsRequest
             if (isset($sortMapValue)) {
                 $queryString = $queryString."=".$sortMapValue;
             }
-            $queryString = $queryString.$querySeprator;
+            $queryString = $queryString.self::$querySeprator;
         }
-        if (null==count($sortMap)) {
+        if (0 < count($sortMap)) {
             $queryString = substr($queryString, 0, strlen($queryString)-1);
         }
         return $queryString;

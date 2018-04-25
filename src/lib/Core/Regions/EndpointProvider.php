@@ -11,7 +11,6 @@ class EndpointProvider
         if (null == $regionId || null == $product || null == self::$endpoints) {
             return null;
         }
-        
         foreach (self::$endpoints as $key => $endpoint) {
             if (in_array($regionId, $endpoint->getRegionIds())) {
                 return self::findProductDomainByProduct($endpoint->getProductDomains(), $product);

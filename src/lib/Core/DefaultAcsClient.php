@@ -11,11 +11,21 @@ class DefaultAcsClient implements IAcsClient
 {
     public $iClientProfile;
     public $__urlTestFlag__;
+    private $locationService;
+    private $ramRoleArnService;
+    private $ecsRamRoleService;
     
     public function __construct($iClientProfile)
     {
         $this->iClientProfile = $iClientProfile;
         $this->__urlTestFlag__ = false;
+        $this->locationService = new LocationService($this->iClientProfile);
+        if ($this->iClientProfile->isRamRoleArn()) {
+            $this->ramRoleArnService = new RamRoleArnService($this->iClientProfile);
+        }
+        if ($this->iClientProfile->isEcsRamRole()) {
+            $this->ecsRamRoleService = new EcsRamRoleService($this->iClientProfile);
+        }
     }
     
     public function getAcsResponse($request, $iSigner = null, $credential = null, $autoRetry = true, $maxRetryNumber = 3)
@@ -40,8 +50,28 @@ class DefaultAcsClient implements IAcsClient
         if (null == $credential) {
             $credential = $this->iClientProfile->getCredential();
         }
+        if ($this->iClientProfile->isRamRoleArn()) {
+            $credential = $this->ramRoleArnService->getSessionCredential();
+        }
+        if ($this->iClientProfile->isEcsRamRole()) {
+            $credential = $this->ecsRamRoleService->getSessionCredential();
+        }
+        if (null == $credential) {
+            throw new ClientException("Incorrect user credentials.", "SDK.InvalidCredential");
+        }
+
         $request = $this->prepareRequest($request);
-        $domain = EndpointProvider::findProductDomain($request->getRegionId(), $request->getProduct());
+
+        // Get the domain from the Location Service by speicified `ServiceCode` and `RegionId`.
+        $domain = null;
+        if (null != $request->getLocationServiceCode())
+        {
+            $domain = $this->locationService->findProductDomain($request->getRegionId(), $request->getLocationServiceCode(), $request->getLocationEndpointType(), $request->getProduct());
+        }       
+        if ($domain == null)
+        {
+            $domain = EndpointProvider::findProductDomain($request->getRegionId(), $request->getProduct());
+        }
 
         if (null == $domain) {
             throw new ClientException("Can not find endpoint to access.", "SDK.InvalidRegionId");
@@ -61,9 +91,9 @@ class DefaultAcsClient implements IAcsClient
         $retryTimes = 1;
         while (500 <= $httpResponse->getStatus() && $autoRetry && $retryTimes < $maxRetryNumber) {
             $requestUrl = $request->composeUrl($iSigner, $credential, $domain);
-            
+
             if (count($request->getDomainParameter())>0) {
-                $httpResponse = HttpHelper::curl($requestUrl, $request->getDomainParameter(), $request->getHeaders());
+                $httpResponse = HttpHelper::curl($requestUrl, $request->getMethod(), $request->getDomainParameter(), $request->getHeaders());
             } else {
                 $httpResponse = HttpHelper::curl($requestUrl, $request->getMethod(), $request->getContent(), $request->getHeaders());
             }
