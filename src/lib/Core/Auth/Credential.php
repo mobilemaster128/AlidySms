@@ -2,7 +2,7 @@
 
 namespace Aliyun\Core\Auth;
 
-class Credential
+class Credential extends AbstractCredential
 {
     private $dateTimeFormat = 'Y-m-d\TH:i:s\Z';
     private $refreshDate;
@@ -11,10 +11,11 @@ class Credential
     private $accessSecret;
     private $securityToken;
     
-    public function __construct($accessKeyId, $accessSecret)
+    public function __construct($accessKeyId, $accessSecret, $securityToken)
     {
         $this->accessKeyId = $accessKeyId;
         $this->accessSecret = $accessSecret;
+        $this->securityToken = $securityToken;
         $this->refreshDate = date($this->dateTimeFormat);
     }
     
