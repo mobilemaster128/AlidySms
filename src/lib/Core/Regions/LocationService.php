@@ -2,12 +2,14 @@
 
 namespace Aliyun\Core\Regions;
 
-define("LOCATION_SERVICE_PRODUCT_NAME", "Location");
-define("LOCATION_SERVICE_DOMAIN", "location.aliyuncs.com");
-define("LOCATION_SERVICE_VERSION", "2015-06-12");
-define("LOCATION_SERVICE_DESCRIBE_ENDPOINT_ACTION", "DescribeEndpoints");
-define("LOCATION_SERVICE_REGION", "cn-hangzhou");
-define("CACHE_EXPIRE_TIME", 3600);
+use Aliyun\Core\RpcAcsRequest;
+
+if (!defined('LOCATION_SERVICE_PRODUCT_NAME')) define("LOCATION_SERVICE_PRODUCT_NAME", "Location");
+if (!defined('LOCATION_SERVICE_DOMAIN')) define("LOCATION_SERVICE_DOMAIN", "location.aliyuncs.com");
+if (!defined('LOCATION_SERVICE_VERSION')) define("LOCATION_SERVICE_VERSION", "2015-06-12");
+if (!defined('LOCATION_SERVICE_DESCRIBE_ENDPOINT_ACTION')) define("LOCATION_SERVICE_DESCRIBE_ENDPOINT_ACTION", "DescribeEndpoints");
+if (!defined('LOCATION_SERVICE_REGION')) define("LOCATION_SERVICE_REGION", "cn-hangzhou");
+if (!defined('CACHE_EXPIRE_TIME')) define("CACHE_EXPIRE_TIME", 3600);
 
 class DescribeEndpointRequest extends RpcAcsRequest
 {

@@ -6,6 +6,7 @@ use Aliyun\Core\Exception\ClientException;
 use Aliyun\Core\Exception\ServerException;
 use Aliyun\Core\Regions\EndpointProvider;
 use Aliyun\Core\Http\HttpHelper;
+use Aliyun\Core\Regions\LocationService;
 
 class DefaultAcsClient implements IAcsClient
 {
