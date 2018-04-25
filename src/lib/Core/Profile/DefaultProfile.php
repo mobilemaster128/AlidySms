@@ -8,6 +8,10 @@ use Aliyun\Core\Regions\ProductDomain;
 use Aliyun\Core\Regions\Endpoint;
 use Aliyun\Core\Regions\EndpointProvider;
 
+define("AUTH_TYPE_RAM_AK", "RAM_AK");
+define("AUTH_TYPE_RAM_ROLE_ARN", "RAM_ROLE_ARN");
+define("AUTH_TYPE_ECS_RAM_ROLE", "ECS_RAM_ROLE");
+
 class DefaultProfile implements IClientProfile
 {
 	private static $profile;
